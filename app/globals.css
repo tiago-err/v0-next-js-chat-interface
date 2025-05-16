@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 263 70% 58%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 263 70% 58%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 263 70% 58%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 263 70% 58%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 263 70% 58%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 263 70% 58%;
+  }
+}
+
+@layer components {
+  .chat-message-bubble {
+    @apply rounded-2xl px-4 py-3 max-w-[85%] shadow-sm;
+  }
+
+  .chat-message-sent {
+    @apply chat-message-bubble bg-primary text-primary-foreground;
+    border-bottom-right-radius: 0.25rem;
+  }
+
+  .chat-message-received {
+    @apply chat-message-bubble bg-secondary text-secondary-foreground;
+    border-bottom-left-radius: 0.25rem;
+  }
+
+  .chat-input {
+    @apply bg-background border-2 border-muted focus:border-primary focus:ring-1 focus:ring-primary transition-colors rounded-full px-4 py-2;
+  }
+
+  .conversation-card {
+    @apply rounded-xl border border-border p-4 hover:border-primary/30 hover:shadow-chat transition-all duration-200;
+  }
+
+  .sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-colors;
+  }
+
+  .sidebar-item-active {
+    @apply bg-chat-light border-l-4 border-primary;
+  }
+}
