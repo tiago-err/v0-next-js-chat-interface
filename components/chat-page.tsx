@@ -1,77 +1,51 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import ChatSidebar from "./chat-sidebar"
-import ChatArea from "./chat-area"
-import ResponsiveChatLayout from "./layout/responsive-chat-layout"
-import { mockUsers, mockMessages } from "@/lib/mock-data"
-import type { User, Message } from "@/lib/types"
-import { useMobile } from "@/hooks/use-mobile"
+import {useRouter} from "next/navigation";
+import ChatSidebar from "./chat-sidebar";
+import ChatArea from "./chat-area";
+import ResponsiveChatLayout from "./layout/responsive-chat-layout";
+import {useMobile} from "@/hooks/use-mobile";
+import {Conversation, User, Message} from "@/generated/prisma";
+import {useEffect} from "react";
 
 interface ChatPageProps {
-  userId: string
+	conversation: Conversation;
+	conversations: {id: string; participant: User; messages: Message[]}[];
+	participant: User;
+	user: User;
+	messages: Message[];
+	sendMessage: (text: string) => Promise<(Message & {sender: User}) | undefined>;
+	reload: () => Promise<void>;
 }
 
-export default function ChatPage({ userId }: ChatPageProps) {
-  const router = useRouter()
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
-  const [messages, setMessages] = useState<Record<string, Message[]>>(mockMessages)
-  const isMobile = useMobile()
+export default function ChatPage({conversation, conversations, participant, user, messages, sendMessage, reload}: ChatPageProps) {
+	const router = useRouter();
+	const isMobile = useMobile();
 
-  // Find the user based on the userId param
-  useEffect(() => {
-    const user = mockUsers.find((u) => u.id === userId) || null
-    setSelectedUser(user)
-  }, [userId])
+	useEffect(() => {
+		const reloader = setInterval(reload, 2000);
 
-  const handleSendMessage = (text: string) => {
-    if (!selectedUser || !text.trim()) return
+		return () => clearInterval(reloader);
+	}, []);
 
-    const newMessage: Message = {
-      id: `m${Date.now()}`,
-      conversationId: `conv${selectedUser.id}`,
-      senderId: "current-user",
-      text,
-      timestamp: new Date(),
-      read: true,
-    }
+	const handleBack = () => {
+		router.push("/");
+	};
 
-    setMessages((prev) => ({
-      ...prev,
-      [selectedUser.id]: [...(prev[selectedUser.id] || []), newMessage],
-    }))
-  }
+	// Sidebar component
+	const sidebar = <ChatSidebar conversations={conversations} selectedConversation={conversation.id} showBackButton onBack={handleBack} />;
 
-  const handleSelectUser = (user: User) => {
-    router.push(`/chat/${user.id}`)
-  }
+	// Content component with toggleSidebar prop
+	const content = ({toggleSidebar}: {toggleSidebar: () => void}) => (
+		<ChatArea
+			participant={participant}
+			user={user}
+			messages={messages}
+			onSendMessage={sendMessage}
+			onToggleSidebar={toggleSidebar}
+			onBack={handleBack}
+		/>
+	);
 
-  const handleBack = () => {
-    router.push("/")
-  }
-
-  // Sidebar component
-  const sidebar = (
-    <ChatSidebar
-      users={mockUsers}
-      selectedUser={selectedUser}
-      onSelectUser={handleSelectUser}
-      showBackButton={isMobile}
-      onBack={handleBack}
-    />
-  )
-
-  // Content component with toggleSidebar prop
-  const content = ({ toggleSidebar }: { toggleSidebar: () => void }) => (
-    <ChatArea
-      user={selectedUser}
-      messages={selectedUser ? messages[selectedUser.id] || [] : []}
-      onSendMessage={handleSendMessage}
-      onToggleSidebar={toggleSidebar}
-      onBack={handleBack}
-    />
-  )
-
-  return <ResponsiveChatLayout sidebar={sidebar} content={content} isMobile={isMobile} />
+	return <ResponsiveChatLayout sidebar={sidebar} content={content} isMobile={isMobile} />;
 }

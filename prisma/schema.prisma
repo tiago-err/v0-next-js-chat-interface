@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String    @id
+  email    String    @unique
+  name     String
+  avatar   String?
+  password String
+  lastSeen DateTime? @map("last_seen")
+
+  conversations ConversationParticipants[]
+  messages      Message[]
+}
+
+model Message {
+  id             String   @id
+  conversationID String   @map("conversation_id")
+  senderID       String   @map("sender_id")
+  text           String
+  read           Boolean
+  timestamp      DateTime
+
+  conversation Conversation @relation(fields: [conversationID], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderID], references: [id], onDelete: NoAction)
+}
+
+model ConversationParticipants {
+  conversationID String @map("conversation_id")
+  userID         String @map("user_id")
+
+  conversation Conversation @relation(fields: [conversationID], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userID], references: [id], onDelete: Cascade)
+
+  @@id([conversationID, userID])
+  @@map("conversation_participants")
+}
+
+model Conversation {
+  id           String                     @id
+  participants ConversationParticipants[]
+  messages     Message[]
+}
