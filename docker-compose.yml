@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+ ecrop-chat:
+    container_name: ecrop-chat
+    env_file:
+      - .env
+    build: 
+      context: .
+      args:
+        DATABASE_URL: "file:/chat/app.db"
+        AUTH_SECRET: ${AUTH_SECRET}
+        JWT_SECRET: ${JWT_SECRET}
+    image: ecrop/chat:latest
+    volumes:
+      - "/Users/tiagoribeiro/💻 Projects/v0-next-js-chat-interface:/chat"
+    environment:
+      DATABASE_URL: "file:/chat/app.db"
+      AUTH_SECRET: ${AUTH_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - 3000:3000
+    restart: unless-stopped
