@@ -13,7 +13,7 @@ services:
         JWT_SECRET: ${JWT_SECRET}
     image: ecrop/chat:latest
     volumes:
-      - "/Users/tiagoribeiro/💻 Projects/v0-next-js-chat-interface:/chat"
+      - "${DATABASE_FILEP_PATH}:/chat"
     environment:
       DATABASE_URL: "file:/chat/app.db"
       AUTH_SECRET: ${AUTH_SECRET}
