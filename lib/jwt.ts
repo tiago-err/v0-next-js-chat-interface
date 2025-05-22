@@ -20,7 +20,6 @@ export function decodeJWT(token: string) {
 export async function setSessionCookie(token: string) {
 	await setCookie("session", token, {
 		sameSite: "lax",
-		secure: process.env.NODE_ENV === "production",
 		maxAge: 60 * 60 * 24 * 7,
 	});
 }
